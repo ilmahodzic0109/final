@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Final Exam Login</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <main>
+      <div class="container marketing" style="margin-top: 100px;">
+        <!-- Three columns of text below the carousel -->
+        <div class="row">
+          <form id="login-form">
+            <div class="mb-3">
+              <label class="form-label">Email address</label>
+              <input type="email" name="email" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input type="password" name="password" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
+      
+        </div>
+        <div class="row" id="dataContainer">
+          <table class="table" id="table_user">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">First name</th>
+                <th scope="col">Last name</th>
+                <th scope="col">Email</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+              
+        </div>
+      </div>
+
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>
+    <script type="text/javascript">
+      /* TODO #1 Add code to check whether user is logged in or not.
+       * If user is already logged in (token exists) redirect to index.html
+       */
+      /*$(document).ready(function() {
+        if (localStorage.getItem('userLoggedIn')) {
+          window.location.href = 'index.html';
+        }
+      });*/
+
+      $('#login-form').submit(function(event) {
+        event.preventDefault();
+        
+        var formData = $(this).serialize();
+
+        $.ajax({
+          url: '/final/rest/final/login',
+          method: 'GET',
+          data: formData,
+          success: function(response) {
+            toastr.success('Login successful');
+            localStorage.setItem('userLoggedIn', 'true');  // Store login status
+            // Optionally redirect to another page after successful login
+            // window.location.href = 'index.html';
+          },
+          error: function(xhr, status, error) {
+            toastr.error('Invalid username or password');
+            console.error('Error logging in: ' + error);
+          }
+        });
+      });
+
+      /* TODO #2
+       * If user is not logged in (token does not exist or is not valid) implement AJAX call to rest/final/login
+       * when login button is clicked
+       */
+    </script>
+    <script>
+      // script.js
+
+$(document).ready(function() {
+    // Perform GET request when the document is ready
+    $.ajax({
+        url: '/final/rest/final/users',  // Replace with your actual API endpoint
+        method: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            console.log('GET Request Successful:', response);
+            // Call function to render data on success
+            renderData(response);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error making GET request:', error);
+            // Handle errors here
+        }
+    });
+});
+
+// Function to render data received from Ajax response
+function renderData(data) {
+    // Example: Rendering data in a table format
+    var html = '<table class="table"><thead><tr><th>ID</th><th>Name</th><th>Last name</th><th>Email</th></tr></thead><tbody>';
+
+    // Loop through each item in the data array and create table rows
+    data.forEach(function(item) {
+        html += '<tr>';
+        html += '<td>' + item.id + '</td>';
+        html += '<td>' + item.first_name + '</td>';
+        html += '<td>' + item.last_name + '</td>';
+        html += '<td>' + item.email + '</td>';
+        html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+
+    // Append the generated HTML to the dataContainer div
+    $('#dataContainer').html(html);
+}
+
+    </script>
+  </body>
+</html>
